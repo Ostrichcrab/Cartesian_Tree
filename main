@@ -1,0 +1,81 @@
+#include<stdio.h>
+#include<algorithm>
+#include<iostream>
+#include<string.h> 
+using namespace std;
+const int N = 1e5+9;
+const int inf = 0x3f3f3f3f;
+#define ll long long
+struct node
+{
+	int id;
+	int key,val;
+	int pre,l,r;
+	void clear()
+	{
+		pre = l = r = 0;
+	}
+	bool operator <(node t)const
+	{
+		return key<t.key; 
+	 } 
+}T[N];
+int stack[N],p[N],top;
+void Init(int n)
+{
+	for(int i = 1; i<=n; i++)
+		T[i].pre=T[i].l=T[i].r=0;
+	T[0].val=-inf;
+}
+int Build(int n)
+{
+	top = 0;
+	stack[++top]=1;
+	for(int i = 2; i<=n; i++)
+	{
+		while(top>=0&&T[i].val<T[stack[top]].val)
+			--top;
+		if(top)
+		{
+			T[i].pre=stack[top];
+			T[i].l=T[stack[top]].r;
+			T[T[stack[top]].r].pre=i;
+			T[stack[top]].r=i;
+			stack[++top]=i;
+		}
+		else
+		{
+			T[stack[1]].pre=i;
+			T[i].l=stack[1];
+			stack[++top]=i;
+		}
+	}
+	return stack[1];
+}
+int getdep(int root)
+{
+	if(T[root].key==0) return 0;
+	int nl=getdep(T[root].l);
+	int nr=getdep(T[root].r);
+	return (nl>nr)?(nl+1):(nr+1);
+}
+int main()
+{
+	int n;
+	scanf("%d",&n);
+	Init(n);
+	for(int i = 1; i<=n; i++)
+	{
+		scanf("%d",&T[i].val);
+		T[i].id=i=T[i].key=i;
+	}
+	//sort(T+1,T+n+1);
+	int root=Build(n);
+	int dep=getdep(root);
+	printf("%d\n",dep);
+	return 0;
+}
+/*
+15
+9 10 2 -1 3 -5 0 -3 1 12 5 8 -2 6 4
+*/
