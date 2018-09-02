@@ -29,13 +29,13 @@ void Init(int n)
 }
 int Build(int n)
 {
-	top = 0;
-	stack[++top]=1;
+	top = 1;
+	stack[top]=1;
 	for(int i = 2; i<=n; i++)
 	{
-		while(top>=0&&T[i].val<T[stack[top]].val)
+		while(top>0&&T[i].val>T[stack[top]].val) // <
 			--top;
-		if(top)
+		if(top>0)
 		{
 			T[i].pre=stack[top];
 			T[i].l=T[stack[top]].r;
@@ -59,6 +59,12 @@ int getdep(int root)
 	int nr=getdep(T[root].r);
 	return (nl>nr)?(nl+1):(nr+1);
 }
+void show(int root)
+{
+	printf("%d\n",T[root].val);
+	if(T[root].l)	show(T[root].l);
+	if(T[root].r)	show(T[root].r);
+}
 int main()
 {
 	int n;
@@ -67,12 +73,14 @@ int main()
 	for(int i = 1; i<=n; i++)
 	{
 		scanf("%d",&T[i].val);
-		T[i].id=i=T[i].key=i;
+		T[i].id=T[i].key=i;
 	}
 	//sort(T+1,T+n+1);
 	int root=Build(n);
 	int dep=getdep(root);
 	printf("%d\n",dep);
+	//printf("%d\n",T[root].val);
+	//show(root);
 	return 0;
 }
 /*
